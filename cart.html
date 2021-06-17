@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="http://www.gstatic.com/charts/loader.js"></script>
+    <title>영화 장르투표</title>
+</head>
+<body>
+    <h3>좋아하는 영화장르에 투표해주세요.</h3>
+    <div id="chart_div" style="height:500px;"></div>
+    <div id="app">
+        <li v-for="(item, c) in dataArray" v-if="c>0">{{item[0]}} : {{item[1]}}
+            <button v-on:click="addOne(c)">투표</button>
+            <button v-on:click="addTwo(c)">취소</button>
+        </li>
+    </div>
+    <script>
+        var orgdata = [
+            ['장르','명수'],
+            ['액션',0],
+            ['로맨스',0],
+            ['코미디',0],
+            ['호러',0],
+            ['SF',0],
+            ['애니메이션',0]
+        ]
+        google.charts.load('current',{packages:['corechart']})
+        google.charts.setOnLoadCallback(drawBasic)
+
+        function drawBasic(){
+            var data = google.visualization.arrayToDataTable(orgdata)
+            var options = {title:'선호하는 장르', "is3D" :true}
+            var chart = new google.visualization.BarChart(
+                document.getElementById('chart_div')
+            )
+            chart.draw(data, options)
+        }
+    </script>
+    <script>
+        new Vue({
+            el:'#app',
+            data:{
+                dataArray:orgdata
+            },
+            methods:{
+                addOne:function(val){
+                    var obj = this.dataArray[val]
+                    obj[1]++
+                    this.dataArray.splice(val, 1,obj)
+                    drawBasic()
+                },
+                addTwo:function(val){
+                    var obj = this.dataArray[val]
+                    obj[1]--
+                    this.dataArray.splice(val, 1,obj)
+                    drawBasic()
+                }
+            }
+        })
+    </script>
+</body>
+</html>
